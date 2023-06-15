@@ -1,12 +1,3 @@
-#cd "C:\Program Files\MySQL\MySQL Server 8.0\bin"
-
-C:\Program Files\MySQL\MySQL Server 8.0\bin> mysql -u root -p
-Enter password: *********
-
-mysql> ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'newrootpassword';
-Query OK, 0 rows affected (0.10 sec)
-
-mysql> exit
 #!/usr/bin/perl
 =begin
  Exercício 1 da 5ª Ficha de Avaliação da Disciplina: Linguagens Avançadas de Programação 
@@ -19,14 +10,14 @@ use DBI;
  my $ciclo2 = 1;
  my $driver = "mysql"; 
  my $database= 'lojaonline'; 
- my $utilizador = 'usuario';
+ my $utilizador = 'root';
  my $user="";
  my $user_id=0;
  my $senha="senha"; 
  my $password = 'senha'; 
  my $passwordtest=''; 
  my $dsn = "DBI:$driver:database=$database;host=localhost;port=port"; 
- my $precoa4= 0,.25;
+ my $precoa4= 0.25;
  my $precoa4mono= $precoa4 + 0.10;
  my $precoa4cores= $precoa4 + 0.25;
  my $qnta4mono=0;
@@ -64,13 +55,14 @@ use DBI;
             $sth->finish(); 
             $dbh->disconnect();
  
+            }
         }
         }else{ 
             # criar novo usuario na BD 
             print "\nCrie um nome de utilizador de até 16 caracteres: "; 
             $user = <STDIN>; 
             chomp $user;
-             while ($senha!=$passwordtest) { 
+             while ($senha ne $passwordtest) { 
                 print "\nCrie uma Senha de até 16 caracteres: ";
                  $senha=<STDIN>; 
                  chomp $senha; 
@@ -79,25 +71,27 @@ use DBI;
                  $passwordtest=<STDIN>;
                   chomp $passwordtest;
 
-                   if ($password!=$passwordtest) {
+                   if ($senha ne $passwordtest) {
                      print "\nAs senhas nao coincidem";
-                      } 
+                      } else{
+                        print "\nSenha criada com Sucesso!";
+                        } 
             } 
             my $dbh = DBI->connect($dsn,$utilizador,$password) or die "Erro ao conectar: $DBI::errstr"; 
             my $sth = $dbh->prepare("INSERT INTO utilizador(username,password) VALUES (?,?);"); 
             $sth->execute($user,$senha); 
             $sth->finish(); 
             $dbh->disconnect();
-            my $dbh = DBI->connect($dsn,$utilizador,$password) or die "Erro ao conectar: $DBI::errstr"; 
-            my $sth = $dbh->prepare("SELECT username,password FROM utilizador WHERE username=? AND password=?;"); 
+            my $dbh2 = DBI->connect($dsn,$utilizador,$password) or die "Erro ao conectar: $DBI::errstr"; 
+            my $sth2 = $dbh2->prepare("SELECT username,password FROM utilizador WHERE username=? AND password=?;"); 
             $sth->execute($user,$senha);           
             while (my $row = $sth->fetchrow_hashref) {
                $user_id=$row->{id};
             }
-            $sth->finish(); 
-            $dbh->disconnect();
+            $sth2->finish(); 
+            $dbh2->disconnect();
              } 
-    }
+    
      
             print "\n Deseja Realizar uma encomenda? ";
             print "\n 1-Sim";
@@ -123,10 +117,10 @@ use DBI;
       chomp $ciclo2;
     }
     print "\nPreco total da encomenda: ";
-    print $precototal;
+    print $preco_total;
     my $dbh = DBI->connect($dsn, $utilizador, $password) or die "Erro ao conectar: $DBI::errstr";
         my $sth = $dbh->prepare("INSERT INTO encomendasa4(id_utiizador,qnt_a4_mono,qnt_a4_cores,preco_total) VALUES (?,?,?,?);"); 
-            $sth->execute($user_id,$qnta4mono,$qnta4cores,$precototal);
+            $sth->execute($user_id,$qnta4mono,$qnta4cores,$preco_total);
             while (my $row = $sth->fetchrow_hashref) {
             print "\n Encomenda Introduzida: ";
             print "\n Id encomenda: $row->{id_encomenda}";

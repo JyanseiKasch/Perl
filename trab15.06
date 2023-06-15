@@ -17,6 +17,11 @@ use DBI;
  my $password = 'senha'; 
  my $passwordtest=''; 
  my $dsn = "DBI:$driver:database=$database;host=localhost;port=port"; 
+ my $precoa4= 0,.25;
+ my $precoa4mono= $precoa4 + 0.10;
+ my $precoa4cores= $precoa4 + 0.25;
+ my $qnta4mono=0;
+ my $qnta4cores=0;
  # Perguntar ao utilizador se ja tem registo 
  print "\nEsse programa e responsavel por gerenciar as encomendas realizadas por clientes de uma loja online "; 
  print "\nJa possue Registo?"; 
@@ -52,11 +57,11 @@ use DBI;
         }
         }else{ 
             # criar novo usuario na BD 
-            print "\nCrie um nome de utilizador: "; 
+            print "\nCrie um nome de utilizador de até 16 caracteres: "; 
             $user = <STDIN>; 
             chomp $user;
              while ($senha!=$passwordtest) { 
-                print "\nCrie uma Senha: ";
+                print "\nCrie uma Senha de até 16 caracteres: ";
                  $senha=<STDIN>; 
                  chomp $senha; 
               
@@ -65,16 +70,45 @@ use DBI;
                   chomp $passwordtest;
 
                    if ($password!=$passwordtest) {
-                     print "As senhas nao coincidem";
+                     print "\nAs senhas nao coincidem";
                       } 
             } 
             my $dbh = DBI->connect($dsn,$utilizador,$password) or die "Erro ao conectar: $DBI::errstr"; 
             my $sth = $dbh->prepare(); 
             $sth->execute("INSERT INTO utilizador(username,password) VALUES (?,?)"); 
+            $sth->finish(); 
+            $dbh->disconnect();
+            my $dbh = DBI->connect($dsn,$utilizador,$password) or die "Erro ao conectar: $DBI::errstr"; 
+            my $sth = $dbh->prepare("SELECT username,password FROM utilizador WHERE username=? AND password=?"); 
+            $sth->execute($user,$senha);           
+            while (my $row = $sth->fetchrow_hashref) {
+               $user_id=$row->{id};
+            }
+            $sth->finish(); 
+            $dbh->disconnect();
+             } 
+    }
+    print "\nPara realizar uma encomenda devera adicionar quantas impressões folhas A4 monocromaticas quer e quantas folhas a cores quer, no fim sera fornecido o preço total da encomenda.";
+    print "\n Preço A4 monocromatica = 0,30€";
+    print "\n Preço A4 a cores = 0,50€";
+    while($ciclo2==1){
+      print "\n Pretende Imprimir quantas folhas A4 Monocromaticas?";
+      $qnta4mono= <STDIN>;
+      chomp $qnta4mono;
+      print "\n Pretende Imprimir quantas folhas A4 a Cores?";
+      $qnta4cores= <STDIN>;
+      chomp $qnta4cores;
+      print"\nDeseja imprimir mais folhas? ";
+      print"\n1-Sim ";
+      print"\nQualquer algarismo- Nao ";
+      $ciclo2=<STDIN>;
+      chomp $ciclo2;
+    }
+    my $dbh = DBI->connect($dsn, $utilizador, $password) or die "Erro ao conectar: $DBI::errstr";
+                my $sth = $dbh->prepare(); 
+            $sth->execute("INSERT INTO utilizador(username,password) VALUES (?,?)"); 
             $sth->finish(); $dbh->disconnect();
-             } my $dbh = DBI->connect($dsn, $utilizador, $password) or die "Erro ao conectar: $DBI::errstr";
-              # while confirmar permiss\ao de acesso a base de dados 
-              # while perguntar se quer adicionar uma folha a cores ou min 
+    
               # Conexão com a base de dados 
               my $dbh = DBI->connect($dsn, $utilizador, $password) or die "Erro ao conectar: $DBI::errstr";
                # Seleciona na base de dados lista de todas as encomendas, produtos adquiridos por cada encomenda e qual o cliente que realizou a mesma. 
@@ -83,8 +117,4 @@ use DBI;
                 $sth->finish(); 
                 $dbh->disconnect();
                 
-while (my $row = $sth->fetchrow_hashref) {
-# Verifica se é uma nova encomenda
-#ne compara 2 strings e caso não sejam iguais, retorna true.
-if ($row->{encomenda_id} ne $atualencomenda_id
                 

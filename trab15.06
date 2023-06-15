@@ -1,0 +1,71 @@
+#!/usr/bin/perl
+=begin
+ Exercício 1 da 5ª Ficha de Avaliação da Disciplina: Linguagens Avançadas de Programação 
+=cut
+ 
+use strict;
+use warnings; 
+use DBI;
+ my $ciclo =1; 
+ my $driver = "mysql"; 
+ my $database= 'lojaonline'; 
+ my $utilizador = 'usuario';
+ my $user="";
+ my $senha="senha"; 
+ my $password = 'senha'; 
+ my $passwordtest=''; 
+ my $dsn = "DBI:$driver:database=$database;host=localhost;port=port"; 
+ # Perguntar ao utilizador se ja tem registo 
+ print "\nEsse programa e responsavel por gerenciar as encomendas realizadas por clientes de uma loja online "; 
+ print "\nJa possue Registo?"; 
+ print "\n1-Sim"; 
+ print "\nQualquer algarismo-Nao";
+  my reg = <STDIN>; 
+  chomp reg; if(reg==1){ 
+    # Login na loja 
+    while($ciclo==1){ 
+        print "\nInsira o utilizador: ";
+        $user = <STDIN>; 
+        chomp $user;
+        print "\nInsira a Senha: ";
+        $senha=<STDIN>; 
+        chomp $senha;
+        my $dbh = DBI->connect($dsn,$utilizador,$password) or die "Erro ao conectar: $DBI::errstr"; 
+            my $sth = $dbh->prepare(); 
+            $sth->execute("SELECT username,password FROM utilizador WHERE username=? AND password=?"); 
+            $sth->finish(); 
+            $dbh->disconnect();
+        print "Credenciais invalidas";
+        }
+        }else{ 
+            # criar novo usuario na BD 
+            print "\nCrie um nome de utilizador: "; 
+            $user = <STDIN>; 
+            chomp $user;
+             while ($senha!=$passwordtest) { 
+                print "\nCrie uma Senha: ";
+                 $senha=<STDIN>; 
+                 chomp $senha; 
+                 print "\nIntroduza a senha novamente Senha: "; 
+                 $passwordtest=<STDIN>;
+                  chomp $passwordtest;
+
+                   if ($password!=$passwordtest) {
+                     print "As senhas nao coincidem";
+                      } 
+            } 
+            my $dbh = DBI->connect($dsn,$utilizador,$password) or die "Erro ao conectar: $DBI::errstr"; 
+            my $sth = $dbh->prepare(); 
+            $sth->execute("INSERT INTO utilizador(username,password) VALUES (?,?)"); 
+            $sth->finish(); $dbh->disconnect();
+             } my $dbh = DBI->connect($dsn, $utilizador, $password) or die "Erro ao conectar: $DBI::errstr";
+              # while confirmar permiss\ao de acesso a base de dados 
+              # while perguntar se quer adicionar uma folha a cores ou min 
+              # Conexão com a base de dados 
+              my $dbh = DBI->connect($dsn, $utilizador, $password) or die "Erro ao conectar: $DBI::errstr";
+               # Seleciona na base de dados lista de todas as encomendas, produtos adquiridos por cada encomenda e qual o cliente que realizou a mesma. 
+               my $sth = $dbh->prepare("SELECT e.Id AS encomenda_id, c.Nome AS cliente_nome, p.Nome AS produto_nome, ep.Qtd, e.Estado FROM Encomenda e, Cliente c, Encomenda_Produtos ep, Produto p WHERE e.Id_cliente = c.Id AND e.Id = ep.Id_encomenda AND ep.Id_produto = p.Id");
+                $sth->execute(); 
+                $sth->finish(); 
+                $dbh->disconnect();
+                

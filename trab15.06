@@ -116,10 +116,11 @@ use DBI;
     print "\nPreco total da encomenda: ";
     print $precototal;
     my $dbh = DBI->connect($dsn, $utilizador, $password) or die "Erro ao conectar: $DBI::errstr";
-        my $sth = $dbh->prepare("INSERT INTO encomenda(id_utiizador,qnt_a4_mono,qnt_a4_cores,preco_total) VALUES (?,?,?,?);"); 
+        my $sth = $dbh->prepare("INSERT INTO encomendasa4(id_utiizador,qnt_a4_mono,qnt_a4_cores,preco_total) VALUES (?,?,?,?);"); 
             $sth->execute($user_id,$qnta4mono,$qnta4cores,$precototal);
             while (my $row = $sth->fetchrow_hashref) {
             print "\n Encomenda Introduzida: ";
+            print "\n Id encomenda: $row->{id_encomenda}";
             print "\n Id do utilizador: $row->{id_utilizador}";
             print "\n Quantidade de Impressões em folhas A4 Monocromaticas: $row->{qnt_a4_mono}";
             print "\n Quantidade de Impressões em folhas A4 a Cores: $row->{qnt_a4_cores}";
@@ -130,8 +131,9 @@ use DBI;
     }
     print "\n Todas encomendas Existentes:";
     my $dbh = DBI->connect($dsn, $utilizador, $password) or die "Erro ao conectar: $DBI::errstr";
-            my $sth = $dbh->prepare("SELECT id_utiizador,qnt_a4_mono,qnt_a4_cores,preco_total FROM encomendasa4;"); 
+            my $sth = $dbh->prepare("SELECT id_encomenda;id_utiizador,qnt_a4_mono,qnt_a4_cores,preco_total FROM encomendasa4;"); 
             while (my $row = $sth->fetchrow_hashref) {
+            print "\n Id encomenda: $row->{id_encomenda}";
             print "\n Id do utilizador: $row->{id_utilizador}";
             print "\n Quantidade de Impressões em folhas A4 Monocromaticas: $row->{qnt_a4_mono}";
             print "\n Quantidade de Impressões em folhas A4 a Cores: $row->{qnt_a4_cores}";

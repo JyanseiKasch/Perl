@@ -7,10 +7,12 @@ use strict;
 use warnings; 
 use DBI;
  my $ciclo =1; 
+ my $ciclo2 = 1;
  my $driver = "mysql"; 
  my $database= 'lojaonline'; 
  my $utilizador = 'usuario';
  my $user="";
+ my $user_id=0;
  my $senha="senha"; 
  my $password = 'senha'; 
  my $passwordtest=''; 
@@ -20,8 +22,9 @@ use DBI;
  print "\nJa possue Registo?"; 
  print "\n1-Sim"; 
  print "\nQualquer algarismo-Nao";
-  my reg = <STDIN>; 
-  chomp reg; if(reg==1){ 
+  my $reg = <STDIN>; 
+  chomp $reg;
+  if($reg==1){ 
     # Login na loja 
     while($ciclo==1){ 
         print "\nInsira o utilizador: ";
@@ -31,11 +34,21 @@ use DBI;
         $senha=<STDIN>; 
         chomp $senha;
         my $dbh = DBI->connect($dsn,$utilizador,$password) or die "Erro ao conectar: $DBI::errstr"; 
-            my $sth = $dbh->prepare(); 
-            $sth->execute("SELECT username,password FROM utilizador WHERE username=? AND password=?"); 
+            my $sth = $dbh->prepare("SELECT username,password FROM utilizador WHERE username=? AND password=?"); 
+            $sth->execute($user,$senha);           
+            while (my $row = $sth->fetchrow_hashref) {
+               if ($row->{username} ne $user || $row->{password} ne $senha){
+               print "Credenciais invalidas";
+               }else{
+               print "Login Efetuado com sucesso!";
+               $user_id=$row->{id};
+               $sth->finish(); 
+            $dbh->disconnect();
+            $ciclo=0;
+               }
             $sth->finish(); 
             $dbh->disconnect();
-        print "Credenciais invalidas";
+ 
         }
         }else{ 
             # criar novo usuario na BD 
@@ -46,6 +59,7 @@ use DBI;
                 print "\nCrie uma Senha: ";
                  $senha=<STDIN>; 
                  chomp $senha; 
+              
                  print "\nIntroduza a senha novamente Senha: "; 
                  $passwordtest=<STDIN>;
                   chomp $passwordtest;

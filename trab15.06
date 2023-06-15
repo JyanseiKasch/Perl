@@ -69,3 +69,8 @@ use DBI;
                 $sth->finish(); 
                 $dbh->disconnect();
                 
+while (my $row = $sth->fetchrow_hashref) {
+# Verifica se é uma nova encomenda
+#ne compara 2 strings e caso não sejam iguais, retorna true.
+if ($row->{encomenda_id} ne $atualencomenda_id
+                
